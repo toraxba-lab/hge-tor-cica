@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-// LINHA CORRIGIDA ABAIXO:
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Activity, Save, ShieldCheck, Clock, UserCheck, Scissors, CheckCircle2, ClipboardPlus, LogOut, Eye, Stethoscope, MapPin, Skull } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
@@ -263,3 +262,41 @@ export default function PatientDetailsPage({ params }: { params: Promise<{ id: s
             )}
           </div>
         </div>
+
+        <div className="flex items-center gap-2 flex-wrap">
+          {!isAlta && (
+            <>
+              <Dialog open={isDischargeDialogOpen} onOpenChange={setIsDischargeDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="gap-2 border-destructive text-destructive hover:bg-destructive/10">
+                    <LogOut size={16} /> Encerrar Internamento
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Confirmar Desfecho</DialogTitle>
+                    <DialogDescription>
+                      Selecione o tipo de saída para o paciente <strong>{patient.nome}</strong>. Esta ação é irreversível.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="py-6">
+                    <RadioGroup 
+                      defaultValue="alta_medica" 
+                      onValueChange={(val) => setDischargeOutcome(val as DesfechoPaciente)}
+                      className="flex flex-col gap-4"
+                    >
+                      <div className="flex items-center space-x-3 space-y-0 bg-muted/30 p-4 rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
+                        <RadioGroupItem value="alta_medica" id="alta" />
+                        <Label htmlFor="alta" className="flex-1 cursor-pointer font-bold flex items-center gap-2">
+                          <CheckCircle2 className="text-green-600" size={18} />
+                          Alta Médica
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-3 space-y-0 bg-destructive/5 p-4 rounded-lg cursor-pointer hover:bg-destructive/10 transition-colors">
+                        <RadioGroupItem value="obito" id="obito" />
+                        <Label htmlFor="obito" className="flex-1 cursor-pointer font-bold flex items-center gap-2">
+                          <Skull className="text-destructive" size={18} />
+                          Óbito
+                        </Label>
+                      </div>
+                    </RadioGroup
