@@ -9,81 +9,80 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .card-shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
-    </style>
 </head>
-<body class="bg-[#f8fafc] min-h-screen">
+<body class="bg-[#f8fafc] min-h-screen font-sans">
 
-    <div id="secao-login" class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm border border-slate-200">
-            <div class="text-center mb-8">
-                <div class="bg-blue-600 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <i data-lucide="shield-check" class="text-white"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-slate-900">HGE - Acesso Restrito</h2>
-                <p class="text-slate-500 text-sm">Identifique-se para continuar</p>
+    <div id="tela-login" class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm border border-slate-200 text-center">
+            <div class="bg-blue-600 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="shield-check" class="text-white"></i>
             </div>
-            <div class="space-y-4">
-                <input type="number" id="idMedico" placeholder="ID do Médico (Ex: 1001)" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                <input type="password" id="senha" placeholder="Senha" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                <button onclick="fazerLogin()" class="w-full bg-blue-600 text-white p-3 rounded-lg font-bold hover:bg-blue-700 transition-colors">Entrar no Sistema</button>
-            </div>
+            <h2 class="text-2xl font-bold text-slate-900 mb-6">Acesso HGE Torácica</h2>
+            <input type="number" id="idLog" placeholder="ID Médico" class="w-full p-3 border rounded-lg mb-3 outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="password" id="passLog" placeholder="Senha" class="w-full p-3 border rounded-lg mb-6 outline-none focus:ring-2 focus:ring-blue-500">
+            <button onclick="login()" class="w-full bg-blue-600 text-white p-3 rounded-lg font-bold hover:bg-blue-700">Entrar</button>
         </div>
     </div>
 
-    <div id="secao-app" class="hidden p-4 md:p-8 max-w-6xl mx-auto space-y-8">
+    <div id="tela-home" class="hidden p-4 md:p-8 max-w-6xl mx-auto space-y-8">
         <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-4xl font-bold tracking-tight text-slate-900">
-                    Bem-vindo, <span id="userName" class="text-blue-600">Doutor</span>
-                </h1>
-                <p class="text-slate-500 text-lg">Unidade de Cirurgia Torácica - HGE</p>
-            </div>
-            <button onclick="deslogar()" class="text-red-500 font-medium hover:underline flex items-center gap-1">
-                <i data-lucide="log-out" class="w-4 h-4"></i> Sair
-            </button>
+            <h1 class="text-3xl font-bold">Olá, <span id="userDisp" class="text-blue-600">Doutor</span></h1>
+            <button onclick="auth.signOut()" class="text-red-500 flex items-center gap-1 font-medium"><i data-lucide="log-out" class="w-4 h-4"></i> Sair</button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-xl border border-slate-200 card-shadow">
+            <button onclick="navegar('tela-novo')" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-blue-500 text-left">
                 <i data-lucide="user-plus" class="text-blue-600 mb-4"></i>
                 <h3 class="font-bold text-xl">Novo Paciente</h3>
-                <p class="text-slate-500 text-sm mb-6">Cadastrar entrada de paciente no setor.</p>
-                <a href="paciente-novo.html" class="block w-full text-center py-2 border border-slate-200 rounded-lg hover:bg-slate-50">Ir para Cadastro</a>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl border-l-4 border-l-orange-500 border-y border-r border-slate-200 card-shadow">
-                <i data-lucide="clipboard-plus" class="text-orange-600 mb-4"></i>
-                <h3 class="font-bold text-xl">Procedimento</h3>
-                <p class="text-slate-500 text-sm mb-6">Registrar produtividade (SIGTAP).</p>
-                <a href="procedimento-novo.html" class="block w-full text-center py-2 bg-orange-500 text-white rounded-lg font-bold hover:bg-orange-600">Selecionar Paciente</a>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl border border-slate-200 card-shadow">
+                <p class="text-slate-500 text-sm">Cadastrar entrada no setor.</p>
+            </button>
+            <button onclick="navegar('tela-censo')" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-blue-500 text-left">
                 <i data-lucide="users" class="text-blue-600 mb-4"></i>
                 <h3 class="font-bold text-xl">Lista Internados</h3>
-                <p class="text-slate-500 text-sm mb-6">Visualizar mapa de pacientes.</p>
-                <a href="censo.html" class="block w-full text-center py-2 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800">Acessar Lista</a>
+                <p class="text-slate-500 text-sm">Ver mapa de pacientes.</p>
+            </button>
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm opacity-50 cursor-not-allowed text-left">
+                <i data-lucide="clipboard-plus" class="text-orange-600 mb-4"></i>
+                <h3 class="font-bold text-xl">SIGTAP</h3>
+                <p class="text-slate-500 text-sm">Em breve.</p>
             </div>
         </div>
 
-        <div class="pt-4 space-y-4">
-            <h2 class="text-2xl font-semibold flex items-center gap-2">
-                <i data-lucide="scissors" class="text-amber-500"></i>
-                Cirurgias Indicadas / Agendadas
-                <span id="contador" class="bg-amber-100 text-amber-800 text-sm px-2 rounded-full">0</span>
+        <div class="space-y-4 pt-4 border-t">
+            <h2 class="text-2xl font-bold flex items-center gap-2">
+                <i data-lucide="scissors" class="text-amber-500"></i> Cirurgias Pendentes
             </h2>
-            <div id="listaCirurgias" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-slate-500 italic">
-                Aguardando carregamento dos dados...
+            <div id="listaPendentes" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+    </div>
+
+    <div id="tela-novo" class="hidden p-4 md:p-8 max-w-xl mx-auto">
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+            <h2 class="text-2xl font-bold mb-6">Novo Cadastro</h2>
+            <div class="space-y-4">
+                <input type="text" id="pNome" placeholder="Nome Completo" class="w-full p-3 border rounded-lg">
+                <input type="number" id="pHC" placeholder="Registro HC" class="w-full p-3 border rounded-lg">
+                <select id="pSetor" class="w-full p-3 border rounded-lg bg-white">
+                    <option>Enfermagem 4B</option><option>UTI Geral</option><option>Emergência</option>
+                </select>
+                <input type="text" id="pInd" placeholder="Indicação Cirúrgica" class="w-full p-3 border rounded-lg">
+                <div class="flex gap-2">
+                    <button onclick="salvarPaciente()" class="flex-1 bg-blue-600 text-white p-3 rounded-lg font-bold">Salvar</button>
+                    <button onclick="navegar('tela-home')" class="flex-1 border p-3 rounded-lg">Voltar</button>
+                </div>
             </div>
         </div>
     </div>
 
+    <div id="tela-censo" class="hidden p-4 md:p-8 max-w-4xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-slate-800">Mapa de Pacientes Internados</h2>
+            <button onclick="navegar('tela-home')" class="text-blue-600 font-bold">Voltar</button>
+        </div>
+        <div id="gridCenso" class="grid gap-4"></div>
+    </div>
+
     <script>
-        // CONFIGURAÇÃO DO SEU FIREBASE (Mantenha as suas chaves aqui)
         const firebaseConfig = {
             apiKey: "AIzaSyDwfSkb619C8BCaNdpyUQWrREAFiaHVrvs",
             authDomain: "studio-7546259198-6664c.firebaseapp.com",
@@ -92,62 +91,80 @@
             messagingSenderId: "931953990589",
             appId: "1:931953990589:web:1395eacb6b63e4172450d4"
         };
-
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Monitor de Login
+        // Navegação Simples
+        function navegar(telaId) {
+            ['tela-login', 'tela-home', 'tela-novo', 'tela-censo'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            document.getElementById(telaId).classList.remove('hidden');
+            if(telaId === 'tela-home') carregarDados();
+            if(telaId === 'tela-censo') carregarCenso();
+            lucide.createIcons();
+        }
+
+        // Auth
         auth.onAuthStateChanged(user => {
             if (user) {
-                document.getElementById('secao-login').classList.add('hidden');
-                document.getElementById('secao-app').classList.remove('hidden');
-                document.getElementById('userName').innerText = "ID: " + user.email.split('@')[0];
-                carregarCirurgias();
+                document.getElementById('userDisp').innerText = "ID: " + user.email.split('@')[0];
+                navegar('tela-home');
             } else {
-                document.getElementById('secao-login').classList.remove('hidden');
-                document.getElementById('secao-app').classList.add('hidden');
+                navegar('tela-login');
             }
-            lucide.createIcons();
         });
 
-        function fazerLogin() {
-            const id = document.getElementById('idMedico').value;
-            const s = document.getElementById('senha').value;
-            if(!id || !s) return alert("Preencha ID e Senha");
-            auth.signInWithEmailAndPassword(id + "@hge.com", s).catch(e => alert("Acesso Negado."));
+        function login() {
+            const id = document.getElementById('idLog').value;
+            const s = document.getElementById('passLog').value;
+            auth.signInWithEmailAndPassword(id + "@hge.com", s).catch(() => alert("Erro no login."));
         }
 
-        function deslogar() { auth.signOut(); }
-
-        function carregarCirurgias() {
-            // Aqui buscamos no seu Banco de Dados real do Firebase
-            db.collection("pacientes").where("status", "==", "internado").where("indicacao_cirurgica", "!=", "").get()
-            .then(snapshot => {
-                const container = document.getElementById('listaCirurgias');
-                const contador = document.getElementById('contador');
-                contador.innerText = snapshot.size;
-                
-                if (snapshot.empty) {
-                    container.innerHTML = "Não há cirurgias indicadas.";
-                    return;
-                }
-
-                container.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const p = doc.data();
-                    container.innerHTML += `
-                        <div class="bg-amber-50/50 border-l-4 border-amber-500 border border-slate-200 p-6 rounded-r-xl shadow-sm flex flex-col sm:flex-row justify-between gap-4">
-                            <div class="space-y-2 text-left not-italic">
-                                <div class="font-bold text-slate-900">${p.nome} (HC: ${p.registro_hc})</div>
-                                <div class="text-sm text-amber-800 font-medium">Indicado: ${p.indicacao_cirurgica}</div>
-                                <div class="text-xs text-slate-500">${p.unidade_setor}</div>
-                            </div>
-                        </div>`;
-                });
-                lucide.createIcons();
+        // Funções de Dados
+        function salvarPaciente() {
+            const dados = {
+                nome: document.getElementById('pNome').value,
+                registro_hc: document.getElementById('pHC').value,
+                unidade_setor: document.getElementById('pSetor').value,
+                indicacao_cirurgica: document.getElementById('pInd').value,
+                status: "internado",
+                data: new Date().toISOString()
+            };
+            db.collection("pacientes").add(dados).then(() => {
+                alert("Salvo!");
+                navegar('tela-home');
             });
         }
+
+        function carregarDados() {
+            db.collection("pacientes").where("status", "==", "internado").where("indicacao_cirurgica", "!=", "").get().then(snap => {
+                const list = document.getElementById('listaPendentes');
+                list.innerHTML = snap.empty ? '<p class="text-slate-400">Nenhuma cirurgia agendada.</p>' : '';
+                snap.forEach(doc => {
+                    const p = doc.data();
+                    list.innerHTML += `<div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded card-shadow">
+                        <p class="font-bold">${p.nome} (HC: ${p.registro_hc})</p>
+                        <p class="text-sm text-amber-800">${p.indicacao_cirurgica}</p>
+                    </div>`;
+                });
+            });
+        }
+
+        function carregarCenso() {
+            db.collection("pacientes").where("status", "==", "internado").get().then(snap => {
+                const grid = document.getElementById('gridCenso');
+                grid.innerHTML = '';
+                snap.forEach(doc => {
+                    const p = doc.data();
+                    grid.innerHTML += `<div class="bg-white p-4 rounded-lg border flex justify-between items-center shadow-sm">
+                        <div><p class="font-bold text-slate-900">${p.nome}</p><p class="text-xs text-slate-500">Setor: ${p.unidade_setor}</p></div>
+                        <span class="text-xs font-mono bg-slate-100 px-2 py-1 rounded">HC: ${p.registro_hc}</span>
+                    </div>`;
+                });
+            });
+        }
+
+        lucide.createIcons();
     </script>
 </body>
 </html>
