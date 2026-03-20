@@ -1,34 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
   <meta charset="utf-8">
-  <title>Sistema HGE</title>
+  <title>Sistema HGE - Painel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
-<body>
-  <h1>Sistema HGE</h1>
-  <div id="status">Conectando ao banco...</div>
+<body style="font-family: sans-serif; padding: 30px; background-color: #f0f2f5;">
+
+  <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 400px; margin: auto;">
+    <h2 style="color: #1a73e8;">Painel HGE - Torácica</h2>
+    <p>Registre um procedimento abaixo:</p>
+    
+    <input type="text" id="campoProcedimento" placeholder="Ex: Broncoscopia Rígida" 
+           style="padding: 12px; width: 100%; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+
+    <button onclick="enviarDados()" 
+            style="margin-top: 15px; padding: 12px; width: 100%; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+      Salvar no Firebase
+    </button>
+
+    <div id="status" style="margin-top: 15px; font-weight: bold; text-align: center;"></div>
+  </div>
 
   <script>
-    // PARE AQUI: Cole as chaves que você copiou do site do Firebase abaixo
+    // Suas chaves reais inseridas aqui
     const firebaseConfig = {
-      apiKey: "SUA_API_KEY",
-      authDomain: "SEU_PROJETO.firebaseapp.com",
-      projectId: "SEU_PROJETO_ID",
-      storageBucket: "SEU_PROJETO.appspot.com",
-      messagingSenderId: "SEU_ID",
-      appId: "SUA_APP_ID"
+      apiKey: "AIzaSyDwfSkb619C8BCaNdpyUQWrREAFiaHVrvs",
+      authDomain: "studio-7546259198-6664c.firebaseapp.com",
+      projectId: "studio-7546259198-6664c",
+      storageBucket: "studio-7546259198-6664c.firebasestorage.app",
+      messagingSenderId: "931953990589",
+      appId: "1:931953990589:web:1395eacb6b63e4172450d4"
     };
 
-    // Inicializa o Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Teste de conexão
-    document.getElementById('status').innerText = "Conectado ao Firebase com Sucesso!";
+    function enviarDados() {
+      const proc = document.getElementById('campoProcedimento').value;
+      const statusDiv = document.getElementById('status');
+
+      if (!proc) return alert("Digite o nome do procedimento!");
+
+      statusDiv.style.color = "blue";
+      statusDiv.innerText = "Enviando...";
+
+      db.collection("procedimentos_realizados").add({
+        nome: proc,
+        data: new Date(),
+        origem: "App Cirurgia"
+      })
+      .then(() => {
+        statusDiv.style.color = "green";
+        statusDiv.innerText = "✅ Salvo com sucesso!";
+        document.getElementById('campoProcedimento').value = "";
+      })
+      .catch((error) => {
+        statusDiv.style.color = "red";
+        statusDiv.innerText = "❌ Erro: " + error.message;
+      });
+    }
   </script>
 </body>
 </html>
