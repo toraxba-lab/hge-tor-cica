@@ -1,67 +1,131 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8">
-  <title>Sistema HGE - Painel</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HGE - Cirurgia Torácica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .card-shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
+    </style>
 </head>
-<body style="font-family: sans-serif; padding: 30px; background-color: #f0f2f5;">
+<body class="bg-[#f8fafc] p-4 md:p-8">
 
-  <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 400px; margin: auto;">
-    <h2 style="color: #1a73e8;">Painel HGE - Torácica</h2>
-    <p>Registre um procedimento abaixo:</p>
-    
-    <input type="text" id="campoProcedimento" placeholder="Ex: Broncoscopia Rígida" 
-           style="padding: 12px; width: 100%; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+    <div class="max-w-6xl mx-auto space-y-8 relative">
+        <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+            <div class="flex flex-col gap-2">
+                <h1 class="text-4xl font-bold tracking-tight text-slate-900">
+                    Bem-vindo, <span id="userName" class="text-blue-600 text-3xl block md:inline">Doutor</span>
+                </h1>
+                <p class="text-slate-500 text-lg">Unidade de Cirurgia Torácica - HGE</p>
+            </div>
+        </div>
 
-    <button onclick="enviarDados()" 
-            style="margin-top: 15px; padding: 12px; width: 100%; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
-      Salvar no Firebase
-    </button>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 card-shadow hover:border-blue-500/50 transition-colors">
+                <div class="bg-blue-50 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                    <i data-lucide="user-plus" class="text-blue-600"></i>
+                </div>
+                <h3 class="font-bold text-xl mb-1">Novo Paciente</h3>
+                <p class="text-slate-500 text-sm mb-6">Cadastrar entrada de paciente no setor.</p>
+                <button class="w-full py-2 border border-slate-200 rounded-lg font-medium hover:bg-slate-50">Ir para Cadastro</button>
+            </div>
 
-    <div id="status" style="margin-top: 15px; font-weight: bold; text-align: center;"></div>
-  </div>
+            <div class="bg-white p-6 rounded-xl border-l-4 border-l-orange-500 border-y border-r border-slate-200 card-shadow hover:border-orange-500/50 transition-colors">
+                <div class="bg-orange-50 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                    <i data-lucide="clipboard-plus" class="text-orange-600"></i>
+                </div>
+                <h3 class="font-bold text-xl mb-1">Procedimento</h3>
+                <p class="text-slate-500 text-sm mb-6">Registrar produtividade cirúrgica (SIGTAP).</p>
+                <button class="w-full py-2 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600">Selecionar Paciente</button>
+            </div>
 
-  <script>
-    // Suas chaves reais inseridas aqui
-    const firebaseConfig = {
-      apiKey: "AIzaSyDwfSkb619C8BCaNdpyUQWrREAFiaHVrvs",
-      authDomain: "studio-7546259198-6664c.firebaseapp.com",
-      projectId: "studio-7546259198-6664c",
-      storageBucket: "studio-7546259198-6664c.firebasestorage.app",
-      messagingSenderId: "931953990589",
-      appId: "1:931953990589:web:1395eacb6b63e4172450d4"
-    };
+            <div class="bg-white p-6 rounded-xl border border-slate-200 card-shadow hover:border-blue-500/50 transition-colors">
+                <div class="bg-blue-50 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                    <i data-lucide="users" class="text-blue-600"></i>
+                </div>
+                <h3 class="font-bold text-xl mb-1">Lista Internados</h3>
+                <p class="text-slate-500 text-sm mb-6">Visualizar todos os pacientes no mapa.</p>
+                <button class="w-full py-2 bg-slate-900 text-white rounded-lg font-medium hover:bg-slate-800">Acessar Lista</button>
+            </div>
+        </div>
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+        <div class="space-y-4 pt-4">
+            <div class="flex items-center justify-between border-t border-slate-200 pt-8">
+                <h2 class="text-2xl font-semibold flex items-center gap-2 text-slate-800">
+                    <i data-lucide="scissors" class="text-amber-500"></i>
+                    Cirurgias Indicadas / Agendadas
+                    <span id="contador" class="ml-2 bg-amber-100 text-amber-800 text-sm px-2.5 py-0.5 rounded-full border border-amber-200">0</span>
+                </h2>
+            </div>
 
-    function enviarDados() {
-      const proc = document.getElementById('campoProcedimento').value;
-      const statusDiv = document.getElementById('status');
+            <div id="listaCirurgias" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="col-span-full py-12 text-center bg-slate-50 rounded-xl border border-dashed border-slate-300 text-slate-500">
+                    Não há cirurgias pendentes ou indicadas no momento.
+                </div>
+            </div>
+        </div>
+    </div>
 
-      if (!proc) return alert("Digite o nome do procedimento!");
+    <script>
+        // Inicializa ícones
+        lucide.createIcons();
 
-      statusDiv.style.color = "blue";
-      statusDiv.innerText = "Enviando...";
+        function loadData() {
+            // 1. Carregar Sessão
+            const session = localStorage.getItem('hge_session');
+            if (session) {
+                const user = JSON.parse(session);
+                document.getElementById('userName').innerText = user.nome;
+            }
 
-      db.collection("procedimentos_realizados").add({
-        nome: proc,
-        data: new Date(),
-        origem: "App Cirurgia"
-      })
-      .then(() => {
-        statusDiv.style.color = "green";
-        statusDiv.innerText = "✅ Salvo com sucesso!";
-        document.getElementById('campoProcedimento').value = "";
-      })
-      .catch((error) => {
-        statusDiv.style.color = "red";
-        statusDiv.innerText = "❌ Erro: " + error.message;
-      });
-    }
-  </script>
+            // 2. Carregar e Filtrar Pacientes (Lógica do seu page.tsx)
+            const storedP = localStorage.getItem('hge_patients');
+            const localPatients = storedP ? JSON.parse(storedP) : [];
+            
+            // Filtro: Internado e com indicação cirúrgica
+            const indicados = localPatients.filter(p => p.status === 'internado' && p.indicacao_cirurgica);
+            
+            const container = document.getElementById('listaCirurgias');
+            const contador = document.getElementById('contador');
+            
+            if (indicados.length > 0) {
+                contador.innerText = indicados.length;
+                container.innerHTML = '';
+                
+                indicados.forEach(patient => {
+                    const dataFormatada = new Date(patient.data_indicacao).toLocaleDateString('pt-BR');
+                    container.innerHTML += `
+                        <div class="bg-amber-50/30 border-l-4 border-l-amber-500 border border-slate-200 p-6 rounded-r-xl card-shadow flex flex-col sm:flex-row justify-between gap-4">
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-slate-900 text-lg">${patient.nome}</span>
+                                    <span class="font-mono text-[10px] border border-slate-300 px-1.5 py-0.5 rounded bg-white">HC: ${patient.registro_hc}</span>
+                                </div>
+                                <div class="p-2 bg-white/80 rounded border border-amber-100">
+                                    <p class="text-[10px] font-bold text-amber-900 uppercase tracking-tighter">Procedimento Indicado:</p>
+                                    <p class="text-sm font-medium text-amber-800">${patient.indicacao_cirurgica}</p>
+                                </div>
+                                <div class="flex items-center gap-4 text-xs text-slate-500 pt-1">
+                                    <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3"></i> ${patient.unidade_setor}</span>
+                                    <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Indicado em: ${dataFormatada}</span>
+                                </div>
+                            </div>
+                            <div class="flex sm:flex-col justify-end gap-2 shrink-0">
+                                <button class="px-4 py-2 text-sm border border-slate-200 rounded-lg hover:bg-white transition-colors">Prontuário</button>
+                                <button class="px-4 py-2 text-sm bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-bold">Realizar</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                lucide.createIcons();
+            }
+        }
+
+        window.onload = loadData;
+    </script>
 </body>
 </html>
