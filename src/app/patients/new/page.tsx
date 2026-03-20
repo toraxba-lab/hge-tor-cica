@@ -1,9 +1,8 @@
-
 "use client"
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { MOCK_PACIENTES } from "@/lib/mock-data"
+import { supabase } from "@/lib/supabase" // CONEXÃO COM BANCO
 import { Paciente } from "@/lib/types"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -31,9 +30,7 @@ export default function NewPatientPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showDuplicateAlert, setShowDuplicateAlert] = useState(false)
   const [duplicatePatient, setDuplicatePatient] = useState<Paciente | null>(null)
-  const [allPatients, setAllPatients] = useState<Paciente[]>([])
-  const [sectors, setSectors] = useState<string[]>([])
-
+  
   const [formData, setFormData] = useState({
     nome: "",
     hc: "",
@@ -44,102 +41,84 @@ export default function NewPatientPage() {
 
   useEffect(() => {
     setMounted(true)
-    // Load Patients
-    const storedP = localStorage.getItem('hge_patients')
-    const localPatients = storedP ? JSON.parse(storedP) : []
-    setAllPatients([...MOCK_PACIENTES, ...localPatients])
-
-    // Load Sectors
-    const storedS = localStorage.getItem('hge_sectors')
-    if (storedS) {
-      setSectors(JSON.parse(storedS))
-    } else {
-      const defaultSectors = ["UTI", "Enfermaria", "Vermelha", "Observacao"]
-      setSectors(defaultSectors)
-      localStorage.setItem('hge_sectors', JSON.stringify(defaultSectors))
-    }
   }, [])
-
-  const checkDuplicate = () => {
-    return allPatients.find(
-      p => p.nome.toLowerCase() === formData.nome.toLowerCase() && 
-      p.data_nasc === formData.nasc &&
-      p.status === 'alta'
-    )
-  }
 
   const handlePreSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const duplicate = checkDuplicate()
-    
-    if (duplicate) {
-      setDuplicatePatient(duplicate)
-      setShowDuplicateAlert(true)
-    } else {
-      processSubmit()
-    }
+    // Por enquanto, vamos direto para o cadastro real no banco
+    processSubmit()
   }
 
-  const processSubmit = (isReactivation = false) => {
+  const processSubmit = async () => {
     setIsSubmitting(true)
     
-    const newId = Math.random().toString(36).substr(2, 9)
+    try {
+      // 1. SALVA NO SUPABASE
+      const { data, error } = await supabase
+        .from('patients')
+        .insert([
+          { 
+            name: formData.nome,
+            nome: formData.nome,
+            registro_hc: formData.hc,
+            data_nasc: formData.nasc,
+            data_entrada: formData.entrada,
+            unidade_setor: formData.setor,
+            status: 'internado'
+          }
+        ])
+        .select()
 
-    const newPatient: Paciente = {
-      id: newId,
-      nome: isReactivation && duplicatePatient ? duplicatePatient.nome : formData.nome,
-      registro_hc: isReactivation && duplicatePatient ? duplicatePatient.registro_hc : formData.hc,
-      data_nasc: isReactivation && duplicatePatient ? duplicatePatient.data_nasc : formData.nasc,
-      data_entrada: formData.entrada,
-      unidade_setor: formData.setor,
-      status: 'internado'
-    }
+      if (error) throw error
 
-    const stored = localStorage.getItem('hge_patients')
-    const localPatients = stored ? JSON.parse(stored) : []
-    
-    const updatedLocal = [...localPatients, newPatient]
-    localStorage.setItem('hge_patients', JSON.stringify(updatedLocal))
-
-    setTimeout(() => {
       toast({
-        title: isReactivation ? "Nova Internação Iniciada!" : "Paciente cadastrado!",
-        description: isReactivation 
-          ? "Um novo registro de internamento foi criado para o paciente existente."
-          : "O paciente foi adicionado à lista de internados com sucesso.",
+        title: "Paciente cadastrado com sucesso!",
+        description: "O prontuário digital foi criado no banco de dados.",
       })
-      router.push("/census")
-    }, 800)
+
+      // 2. REDIRECIONA DIRETO PARA O PRONTUÁRIO DELE
+      const novoId = data[0].id
+      router.push(`/patients/${novoId}`)
+
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao salvar",
+        description: error.message,
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (!mounted) return null
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto space-y-6 p-4">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
-          <Link href="/">
+          <Link href="/patients">
             <ArrowLeft size={20} />
           </Link>
         </Button>
-        <h1 className="text-3xl font-bold tracking-tight">Novo Paciente</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Admitir Paciente</h1>
       </div>
 
       <form onSubmit={handlePreSubmit}>
-        <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <UserPlus className="text-primary" size={20} />
-              Dados de Identificação
+        <Card className="shadow-lg border-blue-100">
+          <CardHeader className="bg-slate-50 border-b">
+            <CardTitle className="flex items-center gap-2 text-blue-700 text-lg">
+              <UserPlus size={20} />
+              Identificação e Localização
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 pt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="nome">Nome Completo</Label>
                 <Input 
                   id="nome" 
-                  placeholder="Nome do paciente" 
+                  placeholder="Ex: José da Silva" 
                   required 
                   value={formData.nome}
                   onChange={(e) => setFormData({...formData, nome: e.target.value})}
@@ -186,53 +165,29 @@ export default function NewPatientPage() {
                 required 
                 onValueChange={(v) => setFormData({...formData, setor: v})}
               >
-                <SelectTrigger id="setor">
-                  <SelectValue placeholder="Selecione o setor" />
+                <SelectTrigger id="setor" className="bg-white">
+                  <SelectValue placeholder="Selecione onde o paciente está" />
                 </SelectTrigger>
                 <SelectContent>
-                  {sectors.map((s) => (
-                    <SelectItem key={s} value={s}>{s}</SelectItem>
-                  ))}
-                  {sectors.length === 0 && (
-                    <p className="p-2 text-xs text-muted-foreground text-center">Nenhum setor disponível</p>
-                  )}
+                  <SelectItem value="UTI">UTI</SelectItem>
+                  <SelectItem value="Enfermaria">Enfermaria</SelectItem>
+                  <SelectItem value="Centro Cirúrgico">Centro Cirúrgico</SelectItem>
+                  <SelectItem value="Emergência">Emergência</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </CardContent>
-          <CardFooter className="flex justify-end gap-3 bg-muted/20 p-6 border-t">
+          <CardFooter className="flex justify-end gap-3 bg-slate-50 p-6 border-t">
             <Button variant="outline" type="button" asChild disabled={isSubmitting}>
-              <Link href="/">Cancelar</Link>
+              <Link href="/patients">Cancelar</Link>
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Salvando..." : "Cadastrar Paciente"}
+            <Button type="submit" disabled={isSubmitting} className="bg-blue-600 hover:bg-blue-700">
+              {isSubmitting ? "Gravando no Banco..." : "Confirmar Internamento"}
               <Save size={16} className="ml-2" />
             </Button>
           </CardFooter>
         </Card>
       </form>
-
-      <AlertDialog open={showDuplicateAlert} onOpenChange={setShowDuplicateAlert}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <div className="flex items-center gap-2 text-amber-600 mb-2">
-              <AlertCircle size={24} />
-              <AlertDialogTitle>Paciente já possui histórico</AlertDialogTitle>
-            </div>
-            <AlertDialogDescription>
-              Encontramos um registro histórico para <strong>{duplicatePatient?.nome}</strong>.
-              <br /><br />
-              Deseja iniciar um <strong>novo internamento</strong> para este paciente? O histórico anterior será preservado e vinculado.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-            <AlertDialogCancel onClick={() => processSubmit(false)}>Não, criar novo registro</AlertDialogCancel>
-            <AlertDialogAction onClick={() => processSubmit(true)} className="bg-primary">
-              Sim, novo internamento
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   )
 }
