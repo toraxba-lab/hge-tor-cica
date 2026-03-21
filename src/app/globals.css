@@ -13,16 +13,14 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 0%;
 
-    /* AZUL SÓLIDO: Acabou o vazado */
     --primary: 221.2 83.2% 45%; 
-    --primary-foreground: 0 0% 100%; /* Texto Branco no botão azul */
+    --primary-foreground: 0 0% 100%; 
 
-    /* CINZA SÓLIDO: Para botões secundários */
     --secondary: 210 40% 90%;
-    --secondary-foreground: 0 0% 0%; /* Texto Preto no botão cinza */
+    --secondary-foreground: 0 0% 0%;
 
     --muted: 210 40% 85%;
-    --muted-foreground: 0 0% 0%; /* FORÇA PRETO NO TEXTO APAGADO */
+    --muted-foreground: 0 0% 0%; 
     
     --accent: 210 40% 80%;
     --accent-foreground: 0 0% 0%;
@@ -30,7 +28,6 @@
     --destructive: 0 84.2% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    /* BORDAS GROSSAS: Para enxergar os limites dos campos */
     --border: 0 0% 50%; 
     --input: 0 0% 40%;  
     --ring: 221.2 83.2% 45%;
@@ -42,7 +39,6 @@
 @layer base {
   * {
     @apply border-border;
-    /* REMOVE QUALQUER OPACIDADE OU EFEITO VAZADO */
     opacity: 1 !important; 
   }
   
@@ -51,15 +47,15 @@
     color: #000000 !important;
   }
 
-  /* "BLINDAGEM" CONTRA TEXTO VAZADO */
+  /* BLINDAGEM DE TEXTO */
   button, a, p, span, label, input, td, th, div {
-    color: #000000 !important; /* Força tudo a ser preto */
-    -webkit-text-stroke: 0px !important; /* Remove efeito de borda vazada */
-    text-shadow: none !important; /* Remove sombras que embaçam */
-    font-weight: 600 !important; /* Deixa a letra mais robusta/bold */
+    color: #000000 !important;
+    -webkit-text-stroke: 0px !important;
+    text-shadow: none !important;
+    font-weight: 600 !important;
   }
 
-  /* EXCEÇÃO PARA BOTÕES ESCUROS (Aqui o texto PRECISA ser branco) */
+  /* TEXTO BRANCO APENAS EM BOTÕES ESCUROS */
   .bg-primary, 
   .bg-primary *, 
   .bg-destructive, 
@@ -69,10 +65,47 @@
     color: #ffffff !important;
   }
 
-  /* DESTACA AS BORDAS DOS INPUTS PARA NÃO SEREM "VAZADOS" */
+  /* BORDAS DE INPUTS */
   input, select, textarea {
     background-color: #ffffff !important;
     border: 2px solid #666666 !important;
     color: #000000 !important;
+  }
+
+  /* --- AJUSTE EXCLUSIVO PARA MENU MOBILE (OVERLAY BRANCO) --- */
+  
+  /* Remove o fundo escuro/transparente e deixa branco sólido */
+  [data-state="open"] > div[fixed], 
+  .fixed.inset-0,
+  [class*="backdrop-"],
+  div[aria-hidden="true"] {
+    background-color: #ffffff !important;
+    opacity: 1 !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Força o conteúdo do menu a ser uma folha branca sobreposta */
+  [role="dialog"], 
+  .sheet-content, 
+  aside,
+  nav {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Garante que os links do menu apareçam em preto negrito */
+  [role="dialog"] a, 
+  [role="dialog"] button,
+  nav a {
+    color: #000000 !important;
+    font-weight: 700 !important;
+  }
+
+  /* Botão de Fechar (X) em destaque */
+  button[aria-label="Close"] {
+    color: #ff0000 !important; /* Vermelho para fácil saída */
+    opacity: 1 !important;
   }
 }
