@@ -5,7 +5,7 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 0%; /* TEXTO GERAL: PRETO PURO */
+    --foreground: 0 0% 0%; /* PRETO PURO */
     
     --card: 0 0% 100%;
     --card-foreground: 0 0% 0%;
@@ -13,51 +13,66 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 0%;
 
-    /* VOLTANDO AO AZUL BONITO (Mas com texto interno Branco Puro) */
-    --primary: 221.2 83.2% 53.3%; 
-    --primary-foreground: 0 0% 100%; 
+    /* AZUL SÓLIDO: Acabou o vazado */
+    --primary: 221.2 83.2% 45%; 
+    --primary-foreground: 0 0% 100%; /* Texto Branco no botão azul */
 
-    /* CINZA CLARO NO FUNDO, MAS TEXTO PRETO NO RÓTULO */
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 0 0% 0%;
+    /* CINZA SÓLIDO: Para botões secundários */
+    --secondary: 210 40% 90%;
+    --secondary-foreground: 0 0% 0%; /* Texto Preto no botão cinza */
 
-    /* TEXTOS DE APOIO (Muted): Agora são cinza bem escuro para serem lidos */
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 20%; 
+    --muted: 210 40% 85%;
+    --muted-foreground: 0 0% 0%; /* FORÇA PRETO NO TEXTO APAGADO */
     
-    --accent: 210 40% 96.1%;
+    --accent: 210 40% 80%;
     --accent-foreground: 0 0% 0%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84.2% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    /* BORDAS MAIS DEFINIDAS */
-    --border: 214.3 31.8% 80%; 
-    --input: 214.3 31.8% 70%;  
-    --ring: 221.2 83.2% 53.3%;
+    /* BORDAS GROSSAS: Para enxergar os limites dos campos */
+    --border: 0 0% 50%; 
+    --input: 0 0% 40%;  
+    --ring: 221.2 83.2% 45%;
     
-    --radius: 0.5rem;
+    --radius: 0.3rem;
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+    /* REMOVE QUALQUER OPACIDADE OU EFEITO VAZADO */
+    opacity: 1 !important; 
   }
+  
   body {
-    /* Força o texto a ser sempre preto e nítido */
     @apply bg-background text-black antialiased;
-    color: #000000 !important; 
-  }
-
-  /* REMÉDIO PARA LABELS E TEXTOS PEQUENOS: Força o preto em tudo */
-  label, p, span, h1, h2, h3, h4, td, th {
     color: #000000 !important;
-    font-weight: 500; /* Deixa a letra levemente mais "corposa" */
   }
 
-  /* Exceção para botões: texto branco no fundo azul/vermelho */
-  button.bg-primary, button.bg-destructive {
+  /* "BLINDAGEM" CONTRA TEXTO VAZADO */
+  button, a, p, span, label, input, td, th, div {
+    color: #000000 !important; /* Força tudo a ser preto */
+    -webkit-text-stroke: 0px !important; /* Remove efeito de borda vazada */
+    text-shadow: none !important; /* Remove sombras que embaçam */
+    font-weight: 600 !important; /* Deixa a letra mais robusta/bold */
+  }
+
+  /* EXCEÇÃO PARA BOTÕES ESCUROS (Aqui o texto PRECISA ser branco) */
+  .bg-primary, 
+  .bg-primary *, 
+  .bg-destructive, 
+  .bg-destructive *,
+  button[variant="default"],
+  button[variant="destructive"] {
     color: #ffffff !important;
+  }
+
+  /* DESTACA AS BORDAS DOS INPUTS PARA NÃO SEREM "VAZADOS" */
+  input, select, textarea {
+    background-color: #ffffff !important;
+    border: 2px solid #666666 !important;
+    color: #000000 !important;
   }
 }
