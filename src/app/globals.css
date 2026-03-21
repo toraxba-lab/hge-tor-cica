@@ -4,25 +4,40 @@
 
 @layer base {
   :root {
+    /* FUNDO E TEXTO PRINCIPAL - PRETO NO BRANCO PURO */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 0 0% 0%; /* Preto total para leitura perfeita */
+    
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 0 0% 0%;
+    
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --popover-foreground: 0 0% 0%;
+
+    /* BOTÃO PRINCIPAL (SALVAR/CADASTRAR) - AZUL MARINHO QUASE PRETO */
+    --primary: 222.2 47.4% 11.2%; 
+    --primary-foreground: 0 0% 100%; /* Branco puro no fundo escuro */
+
+    /* BOTÃO SECUNDÁRIO (VOLTAR/CANCELAR) - CINZA COM TEXTO PRETO */
+    --secondary: 210 40% 90%;
+    --secondary-foreground: 222.2 47.4% 0%;
+
+    /* TEXTOS AUXILIARES E DESATIVADOS - MAIS ESCUROS PARA SEREM LIDOS */
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --muted-foreground: 215.4 16.3% 30%;
+    
+    --accent: 210 40% 85%;
+    --accent-foreground: 222.2 47.4% 0%;
+
+    /* BOTÃO DE ALERTA (EXCLUIR/ÓBITO/ALTA) - VERMELHO SANGUE ESCURO */
+    --destructive: 0 100% 30%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* BORDAS E INPUTS - MUITO MAIS VISÍVEIS */
+    --border: 0 0% 60%; /* Cinza escuro para marcar bem os campos */
+    --input: 0 0% 40%;  /* Borda do campo de digitação bem nítida */
+    --ring: 222.2 47.4% 11.2%;
+    
     --radius: 0.5rem;
   }
 }
@@ -32,6 +47,11 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+  }
+  
+  /* AJUSTE EXTRA PARA CAMPOS DE TEXTO (INPUTS) */
+  input, textarea, select {
+    @apply border-2; /* Deixa a borda do campo um pouco mais grossa */
   }
 }
