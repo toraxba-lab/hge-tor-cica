@@ -57,49 +57,53 @@
     color: #000000 !important;
   }
 
-  /* --- AJUSTE EXCLUSIVO PARA MENU MOBILE (REPARO DE TOQUE) --- */
+  /* --- AJUSTE RADICAL PARA MENU MOBILE (REMOÇÃO DE BARREIRA) --- */
   
-  /* O fundo branco agora deixa o toque passar através dele */
+  /* Esconde totalmente a camada de fundo que bloqueia o toque no celular */
   [data-state="open"] > div[fixed], 
   .fixed.inset-0,
   [class*="backdrop-"],
   div[aria-hidden="true"] {
-    background-color: #ffffff !important;
-    opacity: 1 !important;
-    backdrop-filter: none !important;
-    pointer-events: none !important; /* Toque passa por aqui */
-    z-index: 40 !important;
+    display: none !important; /* Remove o bloqueio físico */
+    visibility: hidden !important;
+    pointer-events: none !important;
   }
 
-  /* O Menu em si fica na frente de tudo e aceita o toque */
+  /* Garante que o Menu seja o elemento principal e clicável */
   [role="dialog"], 
   .sheet-content, 
   aside,
   nav {
     background-color: #ffffff !important;
     color: #000000 !important;
-    pointer-events: auto !important; /* Aceita toque aqui */
-    z-index: 50 !important;
-    border: none !important;
-    box-shadow: 10px 0 20px rgba(0,0,0,0.1) !important;
+    pointer-events: auto !important; /* Força aceitação do toque */
+    z-index: 9999 !important;
+    position: fixed !important;
+    display: block !important;
+    border-left: 1px solid #000000 !important;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.2) !important;
   }
 
-  /* Aumenta área de toque dos links para facilitar no celular */
+  /* Garante que os botões dentro do menu respondam ao polegar */
   [role="dialog"] a, 
   [role="dialog"] button,
-  nav a {
-    color: #000000 !important;
-    font-weight: 700 !important;
+  nav a,
+  .sheet-content * {
     pointer-events: auto !important;
+    cursor: pointer !important;
+    z-index: 10000 !important;
+    position: relative !important;
     display: flex !important;
-    padding: 12px 8px !important; /* Mais fácil de clicar com o polegar */
+    padding: 15px 10px !important; /* Área de toque generosa */
+    width: 100% !important;
   }
 
-  /* Botão de Fechar (X) */
-  button[aria-label="Close"], .close-button {
+  /* Botão de fechar (X) - Essencial para voltar */
+  button[aria-label="Close"] {
     color: #ff0000 !important;
-    opacity: 1 !important;
+    scale: 1.5;
+    padding: 20px !important;
+    z-index: 10001 !important;
     pointer-events: auto !important;
-    z-index: 60 !important;
   }
 }
