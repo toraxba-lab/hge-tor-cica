@@ -5,33 +5,24 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 0%; /* PRETO PURO */
-    
+    --foreground: 0 0% 0%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 0%;
-    
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 0%;
-
     --primary: 221.2 83.2% 45%; 
     --primary-foreground: 0 0% 100%; 
-
     --secondary: 210 40% 90%;
     --secondary-foreground: 0 0% 0%;
-
     --muted: 210 40% 85%;
     --muted-foreground: 0 0% 0%; 
-    
     --accent: 210 40% 80%;
     --accent-foreground: 0 0% 0%;
-
     --destructive: 0 84.2% 50%;
     --destructive-foreground: 0 0% 100%;
-
     --border: 0 0% 50%; 
     --input: 0 0% 40%;  
     --ring: 221.2 83.2% 45%;
-    
     --radius: 0.3rem;
   }
 }
@@ -55,26 +46,20 @@
     font-weight: 600 !important;
   }
 
-  /* TEXTO BRANCO APENAS EM BOTÕES ESCUROS */
-  .bg-primary, 
-  .bg-primary *, 
-  .bg-destructive, 
-  .bg-destructive *,
-  button[variant="default"],
-  button[variant="destructive"] {
+  .bg-primary, .bg-primary *, .bg-destructive, .bg-destructive *,
+  button[variant="default"], button[variant="destructive"] {
     color: #ffffff !important;
   }
 
-  /* BORDAS DE INPUTS */
   input, select, textarea {
     background-color: #ffffff !important;
     border: 2px solid #666666 !important;
     color: #000000 !important;
   }
 
-  /* --- AJUSTE EXCLUSIVO PARA MENU MOBILE (OVERLAY BRANCO) --- */
+  /* --- AJUSTE EXCLUSIVO PARA MENU MOBILE (REPARO DE TOQUE) --- */
   
-  /* Remove o fundo escuro/transparente e deixa branco sólido */
+  /* O fundo branco agora deixa o toque passar através dele */
   [data-state="open"] > div[fixed], 
   .fixed.inset-0,
   [class*="backdrop-"],
@@ -82,30 +67,39 @@
     background-color: #ffffff !important;
     opacity: 1 !important;
     backdrop-filter: none !important;
+    pointer-events: none !important; /* Toque passa por aqui */
+    z-index: 40 !important;
   }
 
-  /* Força o conteúdo do menu a ser uma folha branca sobreposta */
+  /* O Menu em si fica na frente de tudo e aceita o toque */
   [role="dialog"], 
   .sheet-content, 
   aside,
   nav {
     background-color: #ffffff !important;
     color: #000000 !important;
+    pointer-events: auto !important; /* Aceita toque aqui */
+    z-index: 50 !important;
     border: none !important;
-    box-shadow: none !important;
+    box-shadow: 10px 0 20px rgba(0,0,0,0.1) !important;
   }
 
-  /* Garante que os links do menu apareçam em preto negrito */
+  /* Aumenta área de toque dos links para facilitar no celular */
   [role="dialog"] a, 
   [role="dialog"] button,
   nav a {
     color: #000000 !important;
     font-weight: 700 !important;
+    pointer-events: auto !important;
+    display: flex !important;
+    padding: 12px 8px !important; /* Mais fácil de clicar com o polegar */
   }
 
-  /* Botão de Fechar (X) em destaque */
-  button[aria-label="Close"] {
-    color: #ff0000 !important; /* Vermelho para fácil saída */
+  /* Botão de Fechar (X) */
+  button[aria-label="Close"], .close-button {
+    color: #ff0000 !important;
     opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 60 !important;
   }
 }
